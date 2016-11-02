@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.stream.IntStream;
 
+import static xl.playground.algo.unionfind.Util.validate;
+
 /**
  * Created by xl on 10/25/16.
  */
@@ -56,5 +58,9 @@ public class WeightedQuickFind implements UnionFind {
         }
 
         return i;
+    }
+
+    public static void main(String... args) {
+        validate(WeightedQuickFind::new);
     }
 }

@@ -3,6 +3,8 @@ package xl.playground.algo.unionfind;
 import java.util.HashSet;
 import java.util.stream.IntStream;
 
+import static xl.playground.algo.unionfind.Util.validate;
+
 /**
  * Created by xl on 10/25/16.
  */
@@ -42,4 +44,7 @@ public class QuickFind implements UnionFind {
         }
     }
 
+    public static void main(String... args) {
+        validate(QuickFind::new);
+    }
 }
