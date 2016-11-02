@@ -19,9 +19,9 @@ public class Util {
 
     public static void validate(Consumer<List<Long>> algorithm) {
         long seed = System.nanoTime();
-
-        for (int i = 1; i <= 5; i++) {
-            int dataSize = (int)Math.pow(10, i);
+        int[] dataSizes = new int[] { 5, 10, 50, 100, 1000, 10000, 100000};
+        for (int i = 0; i < dataSizes.length; i++) {
+            int dataSize = dataSizes[i];
 
             List<Long> data = generateRandomNumbers(seed, dataSize);
 
