@@ -3,7 +3,7 @@ package xl.playground.algo.sort;
 import java.util.List;
 
 import static xl.playground.algo.sort.Util.exchange;
-import static xl.playground.algo.sort.Util.validateSortingAlgorithm;
+import static xl.playground.algo.sort.Util.validate;
 
 /**
  * Created by xl on 11/1/16.
@@ -26,16 +26,16 @@ public class Shell {
 
     private static <T extends Comparable<T>> int findH(List<T> list) {
         int h = 1;
-        int i = 1;
-        int trial = 1;
-        while((trial = 3 * i + 1) < list.size()) {
-            h = trial;
-            i++;
+        int l = list.size() / 3;
+
+        while (h < l) {
+            h = 3 * h + 1;
         }
+
         return h;
     }
 
     public static void main(String... args) {
-        validateSortingAlgorithm(Shell::sort);
+        validate(Shell::sort);
     }
 }

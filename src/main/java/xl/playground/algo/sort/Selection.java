@@ -3,7 +3,7 @@ package xl.playground.algo.sort;
 import java.util.List;
 
 import static xl.playground.algo.sort.Util.exchange;
-import static xl.playground.algo.sort.Util.validateSortingAlgorithm;
+import static xl.playground.algo.sort.Util.validate;
 
 /**
  * Created by xl on 11/1/16.
@@ -35,6 +35,6 @@ public class Selection {
     }
 
     public static void main(String... args) {
-        validateSortingAlgorithm(Selection::sort);
+        validate(Selection::sort);
     }
 }

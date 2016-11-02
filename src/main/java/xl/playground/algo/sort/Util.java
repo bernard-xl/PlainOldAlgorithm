@@ -1,8 +1,8 @@
 package xl.playground.algo.sort;
 
 import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
-import java.util.stream.LongStream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -17,7 +17,7 @@ public class Util {
         list.set(n, tmp);
     }
 
-    public static void validateSortingAlgorithm(Consumer<List<Long>> algorithm) {
+    public static void validate(Consumer<List<Long>> algorithm) {
         long seed = System.nanoTime();
 
         for (int i = 1; i <= 5; i++) {
@@ -29,14 +29,17 @@ public class Util {
             algorithm.accept(data);
             long endTime = System.nanoTime();
 
-            assert isSorted(data);
+            if (!isSorted(data)) {
+                throw new IllegalStateException("the collection is not sorted");
+            }
 
             System.out.printf("Time elapsed for sorting %d elements: %.2f ms\n", dataSize, (endTime - beginTime) / 1000000.0);
         }
     }
 
     private static List<Long> generateRandomNumbers(long seed, int n) {
-        return LongStream.iterate(seed, i -> (i * 59 + 3333) % 175795)
+        return new Random(seed)
+                .longs(0, 10000)
                 .limit(n)
                 .boxed()
                 .collect(toList());
