@@ -11,40 +11,40 @@ import static xl.playground.algo.sort.Util.validate;
 public class MergeBottomUp {
 
     public static <T extends Comparable<T>> void sort(List<T> list) {
-        List<T> src = list;
-        List<T> dest = new ArrayList<>(list);
         int n = list.size();
+        List<T> aux = new ArrayList<>(list);
 
         for (int len = 1; len < n; len *= 2) {
             for(int lo = 0; lo < n - len; lo += len + len) {
                 int mi = lo + len;
                 int hi = Math.min(lo + len + len, n);
 
-                merge(src, dest, lo, mi, hi);
+                merge(list, aux, lo, mi, hi);
             }
-            List<T> tmp = src;
-            src = dest;
-            dest = tmp;
         }
     }
 
-    private static <T extends Comparable<T>> void merge(List<T> src, List<T> dest, int lo, int mi, int hi) {
+    private static <T extends Comparable<T>> void merge(List<T> list, List<T> aux, int lo, int mi, int hi) {
         int i = lo;
         int j = mi;
 
         for(int k = lo; k < hi; k++) {
             if (i >= mi) {
-                dest.set(k, src.get(j++));
+                aux.set(k, list.get(j++));
             }
             else if (j >= hi) {
-                dest.set(k, src.get(i++));
+                aux.set(k, list.get(i++));
             }
-            else if (src.get(i).compareTo(src.get(j)) > 0) {
-                dest.set(k, src.get(j++));
+            else if (list.get(i).compareTo(list.get(j)) > 0) {
+                aux.set(k, list.get(j++));
             }
             else {
-                dest.set(k, src.get(i++));
+                aux.set(k, list.get(i++));
             }
+        }
+
+        for (int k = lo; k < hi; k++) {
+            list.set(k, aux.get(k));
         }
     }
 

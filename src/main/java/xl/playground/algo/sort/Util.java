@@ -19,7 +19,7 @@ public class Util {
 
     public static void validate(Consumer<List<Long>> algorithm) {
         long seed = System.nanoTime();
-        int[] dataSizes = new int[] { 5, 10, 50, 100, 1000, 10000, 100000};
+        int[] dataSizes = new int[] { 3, 5, 10, 50, 100, 1000, 10000, 100000};
         for (int i = 0; i < dataSizes.length; i++) {
             int dataSize = dataSizes[i];
 
