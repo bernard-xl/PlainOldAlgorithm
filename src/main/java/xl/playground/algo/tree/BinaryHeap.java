@@ -112,7 +112,7 @@ public class BinaryHeap<Item extends Comparable<Item>> implements Queue<Item> {
             items = Arrays.copyOf(items, items.length * 2);
         }
         items[++i] = item;
-        swimUp(i);
+        swim(i);
         return true;
     }
 
@@ -122,8 +122,8 @@ public class BinaryHeap<Item extends Comparable<Item>> implements Queue<Item> {
             throw new NoSuchElementException();
         }
         Item result = items[1];
-        exchange(i--, 1);
-        swimDown(i);
+        items[1] = items[i--];
+        sink(1);
         items[i + 1] = null;
         return result;
     }
@@ -160,35 +160,29 @@ public class BinaryHeap<Item extends Comparable<Item>> implements Queue<Item> {
         return Arrays.asList(items).subList(1, i + 1).toString();
     }
 
-    private void swimUp(int i) {
-        while (i > 1 && items[i].compareTo(items[i / 2]) > 0) {
-            exchange(i, i / 2);
-            i /= 2;
+    private void swim(int k) {
+        while (k > 1 && items[k].compareTo(items[k / 2]) > 0) {
+            exchange(k, k / 2);
+            k /= 2;
         }
     }
 
-    private void swimDown(int i) {
-        int parent = 1;
-        int ii = i / 2;
-        while (parent < ii) {
-            int left = parent * 2;
-            int right = parent * 2 + 1;
-            int swap = (items[left].compareTo(items[right]) >= 0) ? left : right;
+    private void sink(int k) {
+        while (2 * k <= i) {
+            int j = 2 * k;
+            j = (j < i && items[j].compareTo(items[j + 1]) < 0) ? j + 1 : j;
 
-            if (items[parent].compareTo(items[left]) < 0) {
-                exchange(parent, swap);
-                parent = left;
-            } else if (items[parent].compareTo(items[right]) < 0) {
-                exchange(parent, swap);
-                parent = right;
-            } else break;
+            if (items[k].compareTo(items[j]) >= 0) break;
+
+            exchange(k, j);
+            k = j;
         }
     }
 
-    private void exchange(int i, int j) {
-        Item tmp = items[i];
-        items[i] = items[j];
-        items[j] = tmp;
+    private void exchange(int j, int k) {
+        Item tmp = items[j];
+        items[j] = items[k];
+        items[k] = tmp;
     }
 
     public static void main(String... args) {
@@ -208,12 +202,15 @@ public class BinaryHeap<Item extends Comparable<Item>> implements Queue<Item> {
     private static <T extends Comparable<T>> void verify(BinaryHeap<T> heap) {
         T[] items = heap.items;
         int ii = heap.size() / 2;
-        for (int i = 1; i < ii; i++) {
-            if (items[i].compareTo(items[i * 2]) < 0) {
+        for (int i = 1; i <= ii; i++) {
+            T left = items[i * 2];
+            T right = items[i * 2 + 1];
+
+            if (left != null && items[i].compareTo(left) < 0) {
                 throw new IllegalStateException(
                         String.format("heap rule violated: items[%d] < items[%d]", i, i * 2));
             }
-            if (items[i].compareTo(items[i * 2 + 1]) < 0) {
+            if (right != null && items[i].compareTo(right) < 0) {
                 throw new IllegalStateException(
                         String.format("heap rule violated: items[%d] < items[%d]", i, i * 2 + 1));
             }
