@@ -3,6 +3,8 @@ package xl.playground.algo.tree;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by xl on 12/12/16.
@@ -63,7 +65,7 @@ public class BinarySearchTree<Item extends Comparable<Item>> {
             return new Node<>(value);
         }
 
-        if (root.value.compareTo(value) <= 0) {
+        if (root.value.compareTo(value) >= 0) {
             root.left = addNode(root.left, value);
         } else {
             root.right = addNode(root.right, value);
@@ -99,7 +101,7 @@ public class BinarySearchTree<Item extends Comparable<Item>> {
             }
 
             return hasLeftChild ? root.left : root.right;
-        } else if (cmp < 0) {
+        } else if (cmp > 0) {
             root.left = removeNode(root.left, value, flip);
             root.count = 1 + countChildren(root);
             return root;
@@ -111,15 +113,15 @@ public class BinarySearchTree<Item extends Comparable<Item>> {
     }
 
     private Node<Item> minNode(Node<Item> root) {
-        while (root.right != null) {
-            root = root.right;
+        while (root.left != null) {
+            root = root.left;
         }
         return root;
     }
 
     private Node<Item> maxNode(Node<Item> root) {
-        while (root.left != null) {
-            root = root.left;
+        while (root.right != null) {
+            root = root.right;
         }
         return root;
     }
@@ -163,12 +165,12 @@ public class BinarySearchTree<Item extends Comparable<Item>> {
 
         int cmp = root.value.compareTo(value);
         if (cmp == 0) {
-            return (this.root.left == null) ? 0 : this.root.left.count;
-        } else if (cmp < 0) {
+            return (root.left == null) ? 0 : root.left.count;
+        } else if (cmp > 0) {
             return rankNode(root.left, value);
         } else {
-            int leftCount = (this.root.left == null) ? 0 : this.root.left.count;
-            return leftCount + rankNode(root.right, value);
+            int leftCount = (root.left == null) ? 0 : root.left.count;
+            return 1 + leftCount + rankNode(root.right, value);
         }
     }
 
@@ -224,7 +226,7 @@ public class BinarySearchTree<Item extends Comparable<Item>> {
 
         private void populateStack(Node<Item> current) {
             while (current != null) {
-                stack.add(current);
+                stack.push(current);
                 current = current.left;
             }
         }
@@ -274,6 +276,112 @@ public class BinarySearchTree<Item extends Comparable<Item>> {
 
         public Node(Item value) {
             this.value = value;
+            this.count = 1;
         }
+    }
+
+    private static <Item extends Comparable<Item>> BinarySearchTree<Item> makeTree(Item... values) {
+        BinarySearchTree<Item> tree = new BinarySearchTree<>();
+        for (Item v : values) {
+            tree.add(v);
+        }
+        return tree;
+    }
+
+    private static <Item extends Comparable<Item>> String valuesOf(Iterable<Item> itemIterable) {
+        return StreamSupport.stream(itemIterable.spliterator(), false)
+                .map(Object::toString)
+                .collect(Collectors.joining(", ", "[", "]"));
+    }
+
+    private static void testAddAndDelete() {
+        System.out.println("Test add and delete: ");
+        System.out.println("=====================");
+
+        BinarySearchTree<Integer> tree = makeTree(4, 2, 6, 1, 3, 5, 7);
+
+        tree.remove(4);
+        System.out.println(valuesOf(tree.preOrderTraversal()));
+        tree.remove(5);
+        System.out.println(valuesOf(tree.preOrderTraversal()));
+        tree.remove(3);
+        System.out.println(valuesOf(tree.preOrderTraversal()));
+        tree.remove(2);
+        System.out.println(valuesOf(tree.preOrderTraversal()));
+        tree.remove(6);
+        System.out.println(valuesOf(tree.preOrderTraversal()));
+        tree.remove(7);
+        System.out.println(valuesOf(tree.preOrderTraversal()));
+        tree.remove(1);
+        System.out.println(valuesOf(tree.preOrderTraversal()));
+
+        System.out.println();
+    }
+
+    private static void testMinAndMax() {
+        System.out.println("Test min and max: ");
+        System.out.println("=====================");
+
+        BinarySearchTree<Integer> tree = makeTree(4, 2, 6, 1, 3, 5, 7);
+
+        System.out.println("min() = " + tree.min());
+        System.out.println("max() = " + tree.max());
+
+        System.out.println();
+    }
+
+    private static void testFloorAndCeiling() {
+        System.out.println("Test floor and ceiling: ");
+        System.out.println("========================");
+
+        BinarySearchTree<Integer> tree = makeTree(8, 4, 12, 1, 6, 10, 14);
+
+        System.out.println("floor(0) = " + tree.floor(0));
+        System.out.println("floor(3) = " + tree.floor(3));
+        System.out.println("floor(12) = " + tree.floor(12));
+
+        System.out.println("ceiling(16) = " + tree.ceiling(16));
+        System.out.println("ceiling(13) = " + tree.ceiling(13));
+        System.out.println("ceiling(6) = " + tree.ceiling(6));
+
+        System.out.println();
+    }
+
+    private static void testRank() {
+        System.out.println("Test rank: ");
+        System.out.println("===========");
+
+        BinarySearchTree<Integer> tree = makeTree(8, 4, 12, 1, 6, 10, 14);
+
+        System.out.println("rank(1) = " + tree.rank(1));
+        System.out.println("rank(2) = " + tree.rank(2));
+        System.out.println("rank(3) = " + tree.rank(3));
+        System.out.println("rank(4) = " + tree.rank(4));
+        System.out.println("rank(5) = " + tree.rank(5));
+        System.out.println("rank(6) = " + tree.rank(6));
+        System.out.println("rank(16) = " + tree.rank(16));
+
+        System.out.println();
+    }
+
+    private static void testTraversal() {
+        System.out.println("Test traversal: ");
+        System.out.println("================");
+
+        BinarySearchTree<Integer> tree = makeTree(4, 2, 6, 1, 3, 5, 7);
+
+        System.out.println("pre-order traversal:  " + valuesOf(tree.preOrderTraversal()));
+        System.out.println("in-order traversal:   " + valuesOf(tree.inOrderTraversal()));
+        System.out.println("post-order traversal: " + valuesOf(tree.postOrderTraversal()));
+
+        System.out.println();
+    }
+
+    public static void main(String... args) {
+        testAddAndDelete();
+        testMinAndMax();
+        testFloorAndCeiling();
+        testRank();
+        testTraversal();
     }
 }
