@@ -330,6 +330,7 @@ public class BinarySearchTree<Item extends Comparable<Item>> {
         }
     }
 
+    @SafeVarargs
     private static <Item extends Comparable<Item>> BinarySearchTree<Item> makeTree(Item... values) {
         BinarySearchTree<Item> tree = new BinarySearchTree<>();
         for (Item v : values) {
