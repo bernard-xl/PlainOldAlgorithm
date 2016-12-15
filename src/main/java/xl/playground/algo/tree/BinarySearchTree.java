@@ -1,5 +1,6 @@
 package xl.playground.algo.tree;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -43,6 +44,13 @@ public class BinarySearchTree<Item extends Comparable<Item>> {
 
     public int rank(Item value) {
         return rankNode(root, value);
+    }
+
+    public Range range(Item start, Item end) {
+        if (end.compareTo(start) <= 0) {
+            throw new IllegalArgumentException("start must be less than end");
+        }
+        return new Range(start, end);
     }
 
     public Iterable<Item> preOrderTraversal() {
@@ -178,6 +186,48 @@ public class BinarySearchTree<Item extends Comparable<Item>> {
         int leftCount = (root.left == null) ? 0 : root.left.count;
         int rightCount = (root.right == null) ? 0 : root.right.count;
         return leftCount + rightCount;
+    }
+
+    public class Range {
+
+        private Item start;
+        private Item end;
+
+        Range(Item start, Item end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        public int count() {
+            return rank(end) - rank(start);
+        }
+
+        public Iterable<Item> values() {
+            ArrayList<Item> list = new ArrayList<>();
+            includeValues(root, list);
+            return list;
+        }
+
+        private void includeValues(Node<Item> root, ArrayList<Item> list) {
+            if (root == null) {
+                return;
+            }
+
+            boolean afterStart = root.value.compareTo(start) >= 0;
+            boolean beforeEnd = root.value.compareTo(end) < 0;
+
+            if (afterStart) {
+                includeValues(root.left, list);
+            }
+
+            if (afterStart && beforeEnd) {
+                list.add(root.value);
+            }
+
+            if (afterStart && beforeEnd) {
+                includeValues(root.right, list);
+            }
+        }
     }
 
     private static class PreOrderIterator<Item extends Comparable<Item>> implements Iterator<Item> {
@@ -364,6 +414,30 @@ public class BinarySearchTree<Item extends Comparable<Item>> {
         System.out.println();
     }
 
+    private static void testRange() {
+        System.out.println("Test range: ");
+        System.out.println("===========");
+
+        BinarySearchTree<Integer> tree = makeTree(8, 4, 12, 1, 6, 10, 14);
+
+        System.out.println("range(4, 12).count() = " + tree.range(4, 12).count());
+        System.out.println("range(4, 12).values() = " + valuesOf(tree.range(4, 12).values()));
+
+        System.out.println("range(0, 16).count() = " + tree.range(0, 16).count());
+        System.out.println("range(0, 16).values() = " + valuesOf(tree.range(0, 16).values()));
+
+        System.out.println("range(7, 9).count() = " + tree.range(7, 9).count());
+        System.out.println("range(7, 9).values() = " + valuesOf(tree.range(7, 9).values()));
+
+        System.out.println("range(-99, 0).count() = " + tree.range(-99, 0).count());
+        System.out.println("range(-99, 0).values() = " + valuesOf(tree.range(-99, 0).values()));
+
+        System.out.println("range(99, 999).count() = " + tree.range(99, 999).count());
+        System.out.println("range(99, 999).values() = " + valuesOf(tree.range(99, 999).values()));
+
+        System.out.println();
+    }
+
     private static void testTraversal() {
         System.out.println("Test traversal: ");
         System.out.println("================");
@@ -382,6 +456,7 @@ public class BinarySearchTree<Item extends Comparable<Item>> {
         testMinAndMax();
         testFloorAndCeiling();
         testRank();
+        testRange();
         testTraversal();
     }
 }
