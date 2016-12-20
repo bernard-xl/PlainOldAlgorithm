@@ -11,6 +11,41 @@ public class Trie {
 
     private Node root;
 
+    public static void main(String... args) {
+        Trie trie = new Trie();
+
+        System.out.println("is empty: " + trie.isEmpty());
+
+        System.out.println("inserting words into trie...");
+        trie.put("sea");
+        trie.put("sells");
+        trie.put("shell");
+        trie.put("by");
+        trie.put("the");
+        trie.put("she");
+
+        System.out.println("is empty: " + trie.isEmpty());
+
+        System.out.println(trie.longestPrefixOf("themselves"));
+        System.out.println(trie.wordsWithPrefix("shel"));
+        System.out.println(trie.wordsThatMatch(".he"));
+        System.out.println(trie.contains("themselves"));
+        System.out.println(trie.contains("by"));
+        System.out.println(trie.words());
+
+        System.out.println("deleting words from trie...");
+        trie.delete("sea");
+        System.out.println(trie.contains("sea"));
+        trie.delete("sells");
+        System.out.println(trie.contains("sells"));
+        trie.delete("shell");
+        trie.delete("by");
+        trie.delete("the");
+        trie.delete("she");
+
+        System.out.println("is empty: " + trie.isEmpty());
+    }
+
     public void put(String word) {
         root = internalPut(root, word, 0);
     }
@@ -35,7 +70,7 @@ public class Trie {
     public Iterable<String> wordsWithPrefix(String prefix) {
         Node node = internalSearch(root, prefix);
         ArrayList<String> result = new ArrayList<>();
-        internalPrefixCollect(node, "", result);
+        internalPrefixCollect(node, prefix, result);
         return result;
     }
 
@@ -83,7 +118,7 @@ public class Trie {
             return root;
         }
 
-        for (int j = 0; i < ALPHABET_COUNT; j++) {
+        for (int j = 0; j < ALPHABET_COUNT; j++) {
             if (root.children[j] != null) return root;
         }
         return null;
