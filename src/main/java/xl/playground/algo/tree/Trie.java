@@ -11,41 +11,6 @@ public class Trie {
 
     private Node root;
 
-    public static void main(String... args) {
-        Trie trie = new Trie();
-
-        System.out.println("is empty: " + trie.isEmpty());
-
-        System.out.println("inserting words into trie...");
-        trie.put("sea");
-        trie.put("sells");
-        trie.put("shell");
-        trie.put("by");
-        trie.put("the");
-        trie.put("she");
-
-        System.out.println("is empty: " + trie.isEmpty());
-
-        System.out.println(trie.longestPrefixOf("themselves"));
-        System.out.println(trie.wordsWithPrefix("shel"));
-        System.out.println(trie.wordsThatMatch(".he"));
-        System.out.println(trie.contains("themselves"));
-        System.out.println(trie.contains("by"));
-        System.out.println(trie.words());
-
-        System.out.println("deleting words from trie...");
-        trie.delete("sea");
-        System.out.println(trie.contains("sea"));
-        trie.delete("sells");
-        System.out.println(trie.contains("sells"));
-        trie.delete("shell");
-        trie.delete("by");
-        trie.delete("the");
-        trie.delete("she");
-
-        System.out.println("is empty: " + trie.isEmpty());
-    }
-
     public void put(String word) {
         root = internalPut(root, word, 0);
     }
@@ -96,7 +61,7 @@ public class Trie {
             return root;
         }
 
-        char c = word.charAt(i);
+        char c = checked(word.charAt(i));
         root.children[c] = internalPut(root.children[c], word, ++i);
 
         return root;
@@ -110,7 +75,7 @@ public class Trie {
         if (i == word.length()) {
             root.word = false;
         } else {
-            char c = word.charAt(i);
+            char c = checked(word.charAt(i));
             root.children[c] = internalDelete(root.children[c], word, ++i);
         }
 
@@ -130,7 +95,7 @@ public class Trie {
         }
 
         for (int i = 0; i < word.length(); i++) {
-            char c = word.charAt(i);
+            char c = checked(word.charAt(i));
             if (root.children[c] == null) {
                 return null;
             }
@@ -147,7 +112,7 @@ public class Trie {
 
         int result = 0;
         for (int i = 0; i < word.length(); i++) {
-            char c = word.charAt(i);
+            char c = checked(word.charAt(i));
             if (root.children[c] == null) break;
             result += 1;
             root = root.children[c];
@@ -182,7 +147,7 @@ public class Trie {
             return;
         }
 
-        char p = pattern.charAt(prefix.length());
+        char p = checked(pattern.charAt(prefix.length()));
         if (p == '.') {
             for (char i = 0; i < ALPHABET_COUNT; i++) {
                 internalMatchCollect(root.children[i], pattern, prefix + i, result);
@@ -192,9 +157,57 @@ public class Trie {
         }
     }
 
+    private char checked(char c) {
+        if (c >= ALPHABET_COUNT) {
+            throw new IllegalArgumentException("character '" + c + "' is unsupported");
+        }
+        return c;
+    }
+
     private static class Node {
 
         boolean word = false;
         Node[] children = new Node[ALPHABET_COUNT];
+    }
+
+    public static void main(String... args) {
+        Trie trie = new Trie();
+
+        System.out.println("is empty: " + trie.isEmpty());
+
+        System.out.println("inserting words into trie...");
+        trie.put("sea");
+        trie.put("sells");
+        trie.put("shell");
+        trie.put("by");
+        trie.put("the");
+        trie.put("she");
+
+        try {
+            trie.put("你好");
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+        }
+
+        System.out.println("is empty: " + trie.isEmpty());
+
+        System.out.println(trie.longestPrefixOf("themselves"));
+        System.out.println(trie.wordsWithPrefix("shel"));
+        System.out.println(trie.wordsThatMatch(".he"));
+        System.out.println(trie.contains("themselves"));
+        System.out.println(trie.contains("by"));
+        System.out.println(trie.words());
+
+        System.out.println("deleting words from trie...");
+        trie.delete("sea");
+        System.out.println(trie.contains("sea"));
+        trie.delete("sells");
+        System.out.println(trie.contains("sells"));
+        trie.delete("shell");
+        trie.delete("by");
+        trie.delete("the");
+        trie.delete("she");
+
+        System.out.println("is empty: " + trie.isEmpty());
     }
 }
