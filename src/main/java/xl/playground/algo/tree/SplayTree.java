@@ -45,10 +45,11 @@ public class SplayTree<Key extends Comparable<Key>, Value> {
             if (root.left == null) {
                 return root;
             }
-            if (key.compareTo(root.left.key) < 0) {
+            int leftCmp = key.compareTo(root.left.key);
+            if (leftCmp < 0) {
                 root.left.left = splayNode(root.left.left, key);
                 root = rotateRight(root);
-            } else {
+            } else if (leftCmp > 0) {
                 root.left.right = splayNode(root.left.right, key);
                 root = rotateLeft(root);
             }
@@ -57,10 +58,11 @@ public class SplayTree<Key extends Comparable<Key>, Value> {
             if (root.right == null) {
                 return root;
             }
-            if (key.compareTo(root.right.key) < 0) {
+            int rightCmp = key.compareTo(root.right.key);
+            if (rightCmp < 0) {
                 root.right.right = splayNode(root.right.right, key);
                 root = rotateLeft(root);
-            } else {
+            } else if (rightCmp > 0) {
                 root.right.left = splayNode(root.right.left, key);
                 root = rotateRight(root);
             }
