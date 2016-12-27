@@ -60,11 +60,11 @@ public class SplayTree<Key extends Comparable<Key>, Value> {
             }
             int rightCmp = key.compareTo(root.right.key);
             if (rightCmp < 0) {
-                root.right.right = splayNode(root.right.right, key);
-                root = rotateLeft(root);
-            } else if (rightCmp > 0) {
                 root.right.left = splayNode(root.right.left, key);
                 root = rotateRight(root);
+            } else if (rightCmp > 0) {
+                root.right.right = splayNode(root.right.right, key);
+                root = rotateLeft(root);
             }
             return (root.right == null) ? root : rotateLeft(root);
         }
@@ -93,6 +93,19 @@ public class SplayTree<Key extends Comparable<Key>, Value> {
 
         public Node(Key key, Value value) {
             this.key = key;
+            this.value = value;
+        }
+    }
+
+    public static void main(String... args) {
+        SplayTree<Integer, String> splay = new SplayTree<>();
+
+        for (int i = 0; i < 32; i++) {
+            splay.add(i, String.valueOf(i));
+        }
+
+        for (int i = 16; i < 24; i++) {
+            System.out.println("splay[" + i + "] = \"" + splay.get(i) + "\"");
         }
     }
 }
